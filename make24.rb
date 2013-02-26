@@ -123,7 +123,7 @@ class Make24
 
 
 	def find_solution
-		hand = @hand.sort.reverse
+		hand = @hand.sort.reverse # => [a, b, c, d] where [a-d] represent the value of a card in descending order
 		combos_ab = ["#{hand[0]} + #{hand[1]}", "#{hand[0]} - #{hand[1]}", "#{hand[0]} * #{hand[1]}", "#{hand[0].to_f} / #{hand[1]}"]
 		combos_cd = ["#{hand[2]} + #{hand[3]}", "#{hand[2]} - #{hand[3]}", "#{hand[2]} * #{hand[3]}", "#{hand[2].to_f} / #{hand[3]}"]
 
@@ -133,22 +133,26 @@ class Make24
 		combos_ad = ["#{hand[0]} + #{hand[3]}", "#{hand[0]} - #{hand[3]}", "#{hand[0]} * #{hand[3]}", "#{hand[0].to_f} / #{hand[3]}"]
 		combos_bc = ["#{hand[1]} + #{hand[2]}", "#{hand[1]} - #{hand[2]}", "#{hand[1]} * #{hand[2]}", "#{hand[1].to_f} / #{hand[2]}"]
 
-		solution = multiply(combos_ab, combos_cd, hand) ||
-			add(combos_ab, combos_cd, hand) ||
-			subtract(combos_ab, combos_cd, hand) ||
-			divide(combos_ab, combos_cd, hand) ||
-			multiply(combos_ac, combos_bd, hand) ||
-			add(combos_ac, combos_bd, hand) ||
-			subtract(combos_ac, combos_bd, hand) ||
-			divide(combos_ac, combos_bd, hand) ||
-			multiply(combos_ad, combos_bc, hand) ||
-			add(combos_ad, combos_bc, hand) ||
-			subtract(combos_ad, combos_bc, hand) ||
-			divide(combos_ad, combos_bc, hand) ||
+		solution = find_solution_3x1(combos_ab, hand[2], hand[3]) ||
+			find_solution_3x1(combos_cd, hand[0], hand[1]) ||
+			find_solution_3x1(combos_ac, hand[1], hand[3]) ||
+			find_solution_3x1(combos_bd, hand[0], hand[2]) ||
+			find_solution_3x1(combos_ad, hand[1], hand[2]) ||
+			find_solution_3x1(combos_bc, hand[0], hand[3]) ||
+			find_solution_2x2(combos_ab, combos_cd) ||
+			find_solution_2x2(combos_ac, combos_bd) ||
+			find_solution_2x2(combos_ad, combos_bc) ||
 			"No solution"
 	end
 
-	def add(combos1, combos2, hand)
+	def find_solution_2x2 (combos1, combos2)
+		add(combos1, combos2) ||
+		multiply(combos1, combos2) ||
+		subtract(combos1, combos2) ||
+		divide(combos1, combos2)
+	end
+
+	def add(combos1, combos2)
 		combos1.find do |combo1|
 			combos2.find do |combo2|
 				if eval(combo1) + eval(combo2) == 24
@@ -158,7 +162,7 @@ class Make24
 		end
 	end
 
-	def multiply(combos1, combos2, hand)
+	def multiply(combos1, combos2)
 		combos1.find do |combo1|
 			combos2.find do |combo2|
 				if eval(combo1) * eval(combo2) == 24
@@ -168,7 +172,7 @@ class Make24
 		end
 	end
 
-	def subtract(combos1, combos2, hand)
+	def subtract(combos1, combos2)
 		combos1.find do |combo1|
 			combos2.find do |combo2|
 				if eval(combo1) - eval(combo2) == 24
@@ -178,11 +182,70 @@ class Make24
 		end
 	end
 
-	def divide(combos1, combos2, hand)
+	def divide(combos1, combos2)
 		combos1.find do |combo1|
 			combos2.find do |combo2|
-				if eval(combo2) > 0 && eval(combo1) / eval(combo2) == 24 && eval(combo1) % eval(combo2) == 00
+				if eval(combo2) != 0 && eval(combo1) / eval(combo2) == 24 && eval(combo1) % eval(combo2) == 00
 					return "(#{combo1}) / (#{combo2}) = 24"
+				end
+
+			end
+		end
+	end
+
+	def find_solution_3x1(combos, card1, card2)
+		combos.find do |combo|
+			c = eval(combo)
+
+			if (c + card1) * card2 == 24
+				return "(#{combo} + #{card1}) * #{card2} = 24"
+			elsif (c + card1) / card2 == 24
+				return "(#{combo} + #{card1}) / #{card2} = 24"
+			elsif (c + card2) * card1 == 24
+				return "(#{combo} + #{card2}) * #{card1} = 24"
+			elsif (c + card2) / card1 == 24
+				return "(#{combo} + #{card2}) / #{card1} = 24"
+			elsif (c - card1) * card2 == 24
+				return "(#{combo} - #{card1}) * #{card2} = 24"
+			elsif (c - card1) / card2 == 24
+				return "(#{combo} - #{card1}) / #{card2} = 24"
+			elsif (c - card2) * card1 == 24
+				return "(#{combo} - #{card2}) * #{card1} = 24"
+			elsif (c - card2) / card1 == 24
+				return "(#{combo} - #{card2}) / #{card1} = 24"
+			elsif c * card1 - card2 == 24
+				return "(#{combo}) * #{card1} - #{card2} = 24"
+			elsif c * card1 + card2 == 24
+				return "(#{combo}) * #{card1} + #{card2} = 24"
+			elsif c * card2 - card1 == 24
+				return "(#{combo}) * #{card2} - #{card1} = 24"
+			elsif c * card2 + card1 == 24
+				return "(#{combo}) * #{card2} + #{card1} = 24"
+			elsif c / card1 - card2 == 24
+				return "(#{combo}) / #{card1} - #{card2} = 24"
+			elsif c / card1 + card2 == 24
+				return "(#{combo}) / #{card1} + #{card2} = 24"
+			elsif c / card2 - card1 == 24
+				return "(#{combo}) / #{card2} - #{card1} = 24"
+			elsif c / card2 + card1 == 24
+				return "(#{combo}) / #{card2} + #{card1} = 24"
+			elsif (card1 - c) * card2 == 24
+				return "(#{card1} - (#{combo})) * #{card2} = 24"
+			elsif (card1 - c) / card2 == 24
+				return "(#{card1} - (#{combo})) / #{card2} = 24"
+			elsif (card2 - c) * card1 == 24
+				return "(#{card2} - (#{combo})) * #{card1} = 24"
+			elsif (card2 - c) / card1 == 24
+				return "(#{card2} - (#{combo})) / #{card1} = 24"
+			elsif c != 0
+				if card1 / c - card2 == 24
+					return "#{card1} / (#{combo}) - #{card2} = 24"
+				elsif card1 / c + card2 == 24
+					return "#{card1} / (#{combo}) + #{card2} = 24"
+				elsif card2 / c - card1 == 24
+					return "#{card2} / (#{combo}) - #{card1} = 24"
+				elsif card2 / c + card1 == 24
+					return "#{card2} / (#{combo}) + #{card1} = 24"
 				end
 			end
 		end
