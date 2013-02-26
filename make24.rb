@@ -65,24 +65,16 @@ class Make24
 		@hand = draw_hand
 		puts "Ready..."
 		sleep(2)
-		puts "a: |#{@hand['a']}|  b: |#{@hand['b']}|  c: |#{@hand['c']}|  d: |#{@hand['d']}|"
+		@hand.each { |n| print "|#{n}|   " }
+		print "\n"
 	end
 
 	def draw_hand
-		hand = {'a' => nil, 'b' => nil, 'c' => nil, 'd' => nil}
-
-		hand['a'] = @deck[rand(@deck.length)]
-		@deck.delete_at(@deck.index(hand['a']))
-
-		hand['b'] = @deck[rand(@deck.length)]
-		@deck.delete_at(@deck.index(hand['b']))
-
-		hand['c'] = @deck[rand(@deck.length)]
-		@deck.delete_at(@deck.index(hand['c']))
-
-		hand['d'] = @deck[rand(@deck.length)]
-		@deck.delete_at(@deck.index(hand['d']))
-
+		hand = Array.new(4)
+		hand.map! do |n|
+			n = @deck[rand(@deck.length)]
+			@deck.delete_at(@deck.index(n))
+		end
 		return hand
 	end
 
@@ -97,16 +89,16 @@ class Make24
 		if buzzer_id == 'n'
 			@player_answer = nil
 		else
-			puts "Player #{player_id}, enter an equation to make 24 (refer to each card by letter):"
-			player_input = gets.chomp.downcase
-			player_input_char = player_input.split(//)
-			player_input_char.delete(" ")
+			puts "Player #{player_id}, enter an equation to make 24:"
+			player_input = gets.chomp
+			player_input_num =player_input.gsub(/(\(|\)|\*|\+|-|\/)/, " ").split(" ").reject(&:empty?).map(&:to_i)
+			player_input_op = player_input.split(//).map(&:strip).reject(&:empty?).reject{ |char| char.match /\d/}
 
-			until validated?(player_input, player_input_char)
+			until validated?(player_input, player_input_num, player_input_op)
 				puts "Nope, try again: "
 				player_input = gets.chomp.downcase
-				player_input_char = player_input.split(//)
-				player_input_char.delete(" ")
+				player_input_num =player_input.gsub(/(\(|\)|\*|\+|-|\/)/, " ").split(" ").reject(&:empty?).map(&:to_i)
+				player_input_op = player_input.split(//).map(&:strip).reject(&:empty?).reject{ |char| char.match /\d/}
 			end
 
 			@player_answer = [player_input, player_id]
@@ -116,9 +108,7 @@ class Make24
 
 	def check_player_answer
 		if @player_answer
-			player_eq = write_equation(@player_answer)
-
-			if eval(player_eq) == 24
+			if eval(@player_answer[0]) == 24
 				@score[@player_answer[1] - 1] += 1
 				puts "That's correct! Player #{@player_answer[1]} gets 1 point. The current score is #{@score}."
 			else
@@ -131,12 +121,9 @@ class Make24
 		end
 	end
 
-	def write_equation(player_answer)
-		player_eq = player_answer[0].gsub(/[a-d]/) {|l| @hand[l] }
-	end
 
-	# def check_input
-	# 	{'*' => *}
+	# def check_hand
+	# 	@hand['a'] +
 	# end
 
 	def buzzer
@@ -148,14 +135,9 @@ class Make24
 		return buzzer_id
 	end
 
-	def validated?(player_input, player_input_char) #USE REGEX TO CAPTURE AND THEN COMPARE TO CHAR
-		re = /\A\({0,3}\s*[a-d]\s*(\*|\+|-|\/)\s*\({0,2}\s*[a-d]\s*\)?\s*(\*|\+|-|\/)\s*\(?\s*[a-d]\s*\){0,2}\s*(\*|\+|-|\/)\s*[a-d]\s*\){0,3}\z/
-		valid_chars = %w(a b c d + - * / ( ))
-		if !player_input.match re #match agains regexp
-			return false
-		elsif player_input_char.find { |char| !valid_chars.include? char } #must use valid_chars only
-			return false
-		elsif valid_chars[0,4].find { |letter| player_input_char.count(letter) != 1 } #use every card once
+	def validated?(player_input, player_input_num, player_input_op)
+		reg = /\A\({0,3}\s*\d{1,2}\s*(\*|\+|-|\/)\s*\({0,2}\s*\d{1,2}\s*\)?\s*(\*|\+|-|\/)\s*\(?\s*\d{1,2}\s*\){0,2}\s*(\*|\+|-|\/)\s*\d{1,2}\s*\){0,3}\z/
+		unless (player_input.match reg) && player_input_num.sort == @hand.sort
 			return false
 		else
 			return true
