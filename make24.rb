@@ -4,7 +4,6 @@ class Make24
 
 	def initialize
 		@deck = STD_DECK
-		@game_mode
 		@hand
 		@player_answer
 		@score = [0, 0]
@@ -12,7 +11,6 @@ class Make24
 
 	def play
 		intro
-		game_mode
 		until terminal?
 			show_hand
 			player_input
@@ -32,31 +30,11 @@ class Make24
 			txt.close
 			print "Press any key to continue.\n> "
 			STDIN.gets
-		end
-	end
-
-	def game_mode
-		print "Select game mode:\nPress 1 for single player game.\nPress 2 for two player game.\n> "
-		@game_mode = gets.chomp.to_i
-
-		until @game_mode == 1 || @game_mode == 2
-			print "Nope, try again:\nPress 1 for single player game.\nPress 2 for two player game.\n> "
-			@game_mode = gets.chomp.to_i
-		end
-
-		if @game_mode == 1
-			puts "You are Player 1. Your buzzer is 'a'."
-			puts "Press 'n' if you think there is no solution."
-			puts "Press any key to continue"
-			print "> "
 		else
 			puts "Player 1's buzzer is 'a'. Player 2's buzzer is 'l'."
+			puts "Press your buzzer when you're ready to answer."
 			puts "Press 'n' if you think there is no solution."
-			puts "Press any key to continue"
-			print "> "
 		end
-		STDIN.gets
-		@game_mode
 	end
 
 	def show_hand
@@ -102,6 +80,24 @@ class Make24
 			@player_answer = [player_input, player_id]
 		end
 		return @player_answer
+	end
+
+	def buzzer
+		buzzer_id = gets.chomp
+		until buzzer_id == 'n' || buzzer_id == 'a' || buzzer_id == 'l'
+			puts "Invalid input. Press your buzzer or press 'n' if there's no solution."
+			buzzer_id = gets.chomp
+		end
+		return buzzer_id
+	end
+
+	def validated?(player_input, player_input_num, player_input_op)
+		reg = /\A\({0,3}\s*\d{1,2}\s*(\*|\+|-|\/)\s*\({0,2}\s*\d{1,2}\s*\)?\s*(\*|\+|-|\/)\s*\(?\s*\d{1,2}\s*\){0,2}\s*(\*|\+|-|\/)\s*\d{1,2}\s*\){0,3}\z/
+		unless (player_input.match reg) && player_input_num.sort == @hand.sort
+			return false
+		else
+			return true
+		end
 	end
 
 	def check_player_answer
@@ -249,23 +245,6 @@ class Make24
 		end
 	end
 
-	def buzzer
-		buzzer_id = gets.chomp
-		until buzzer_id == 'n' || buzzer_id == 'a' || buzzer_id == 'l'
-			puts "Invalid input. Press your buzzer or press 'n' if there's no solution."
-			buzzer_id = gets.chomp
-		end
-		return buzzer_id
-	end
-
-	def validated?(player_input, player_input_num, player_input_op)
-		reg = /\A\({0,3}\s*\d{1,2}\s*(\*|\+|-|\/)\s*\({0,2}\s*\d{1,2}\s*\)?\s*(\*|\+|-|\/)\s*\(?\s*\d{1,2}\s*\){0,2}\s*(\*|\+|-|\/)\s*\d{1,2}\s*\){0,3}\z/
-		unless (player_input.match reg) && player_input_num.sort == @hand.sort
-			return false
-		else
-			return true
-		end
-	end
 	#def countdown
 	#	puts "You have 10 seconds to enter a correct solution. (Refer to each card by letter)"
 	#	@count = 10
