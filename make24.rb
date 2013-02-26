@@ -23,15 +23,13 @@ class Make24
 
 	def intro
 		puts "--** Welcome to Make 24! **--"
-		puts "Press 'h' for instructions. Press any other key to play."
+		puts "Press 'r' to read the rules. Press any other key to play."
 		print ">"
 		r = gets.chomp.downcase
-		if r == 'h' #put the following text in separate file intro.txt
-			puts "4 cards are displayed at a time. As quickly as you can, try to make 24 by combining the cards with +, -, *, /, (, and )."
-			puts "Press the assigned buzzer when you are ready." #You will have 10 seconds to type in the correct solution. --Not possible?
-			puts "You will receive 1 point for a correct solution. You will lose 1 point for a wrong solution."
-			puts "If no solution is possible, there will be no change to the score."
-			puts "The game ends when all cards in the deck are played or if there are no possible solutions left."
+		if r == 'r' #put the following text in separate file intro.txt
+			txt = File.open ("rules.txt")
+			puts txt.read
+			txt.close
 			print "Press any key to continue.\n> "
 			STDIN.gets
 		end
@@ -114,7 +112,7 @@ class Make24
 			else
 				@score[@player_answer[1] - 1] -= 1
 				puts "That's incorrect. Player #{@player_answer[1]} loses 1 point. The current score is #{@score}."
-				# puts "The correct answer is: "
+				puts "The correct answer is: #{find_solution}"
 			end
 		else
 			puts find_solution
