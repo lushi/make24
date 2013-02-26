@@ -116,15 +116,77 @@ class Make24
 				puts "That's incorrect. Player #{@player_answer[1]} loses 1 point. The current score is #{@score}."
 				# puts "The correct answer is: "
 			end
-		#else
-			#evaluate whether it's possible
+		else
+			puts find_solution
 		end
 	end
 
 
-	# def check_hand
-	# 	@hand['a'] +
-	# end
+	def find_solution
+		hand = @hand.sort.reverse
+		combos_ab = ["#{hand[0]} + #{hand[1]}", "#{hand[0]} - #{hand[1]}", "#{hand[0]} * #{hand[1]}", "#{hand[0].to_f} / #{hand[1]}"]
+		combos_cd = ["#{hand[2]} + #{hand[3]}", "#{hand[2]} - #{hand[3]}", "#{hand[2]} * #{hand[3]}", "#{hand[2].to_f} / #{hand[3]}"]
+
+		combos_ac = ["#{hand[0]} + #{hand[2]}", "#{hand[0]} - #{hand[2]}", "#{hand[0]} * #{hand[2]}", "#{hand[0].to_f} / #{hand[2]}"]
+		combos_bd = ["#{hand[1]} + #{hand[3]}", "#{hand[1]} - #{hand[3]}", "#{hand[1]} * #{hand[3]}", "#{hand[1].to_f} / #{hand[3]}"]
+
+		combos_ad = ["#{hand[0]} + #{hand[3]}", "#{hand[0]} - #{hand[3]}", "#{hand[0]} * #{hand[3]}", "#{hand[0].to_f} / #{hand[3]}"]
+		combos_bc = ["#{hand[1]} + #{hand[2]}", "#{hand[1]} - #{hand[2]}", "#{hand[1]} * #{hand[2]}", "#{hand[1].to_f} / #{hand[2]}"]
+
+		solution = multiply(combos_ab, combos_cd, hand) ||
+			add(combos_ab, combos_cd, hand) ||
+			subtract(combos_ab, combos_cd, hand) ||
+			divide(combos_ab, combos_cd, hand) ||
+			multiply(combos_ac, combos_bd, hand) ||
+			add(combos_ac, combos_bd, hand) ||
+			subtract(combos_ac, combos_bd, hand) ||
+			divide(combos_ac, combos_bd, hand) ||
+			multiply(combos_ad, combos_bc, hand) ||
+			add(combos_ad, combos_bc, hand) ||
+			subtract(combos_ad, combos_bc, hand) ||
+			divide(combos_ad, combos_bc, hand) ||
+			"No solution"
+	end
+
+	def add(combos1, combos2, hand)
+		combos1.find do |combo1|
+			combos2.find do |combo2|
+				if eval(combo1) + eval(combo2) == 24
+					return "(#{combo1}) + (#{combo2}) = 24"
+				end
+			end
+		end
+	end
+
+	def multiply(combos1, combos2, hand)
+		combos1.find do |combo1|
+			combos2.find do |combo2|
+				if eval(combo1) * eval(combo2) == 24
+					return "(#{combo1}) * (#{combo2}) = 24"
+				end
+			end
+		end
+	end
+
+	def subtract(combos1, combos2, hand)
+		combos1.find do |combo1|
+			combos2.find do |combo2|
+				if eval(combo1) - eval(combo2) == 24
+					return "(#{combo1}) - (#{combo2}) = 24"
+				end
+			end
+		end
+	end
+
+	def divide(combos1, combos2, hand)
+		combos1.find do |combo1|
+			combos2.find do |combo2|
+				if eval(combo2) > 0 && eval(combo1) / eval(combo2) == 24 && eval(combo1) % eval(combo2) == 00
+					return "(#{combo1}) / (#{combo2}) = 24"
+				end
+			end
+		end
+	end
 
 	def buzzer
 		buzzer_id = gets.chomp
@@ -159,7 +221,6 @@ class Make24
 	def terminal?
 		if @deck.length == 0
 			return true
-		#elsif rest of the cards are not possible
 		else
 			return false
 		end
