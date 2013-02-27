@@ -38,6 +38,7 @@ class Make24
 		rules.close
 	end
 
+#Select 4 random cards from the deck, delete these cards from the deck and show hand
 	def show_hand
 		@hand = draw_hand
 		puts "Ready..."
@@ -53,6 +54,16 @@ class Make24
 			@deck.delete_at(@deck.index(n))
 		end
 		return hand
+	end
+
+#Get player's answer, validate answer structure, and keep track of which player using buzzer key
+	def buzzer
+		buzzer_id = gets.chomp
+		until buzzer_id == 'n' || buzzer_id == 'a' || buzzer_id == 'l'
+			puts "Invalid input. Press your buzzer or press 'n' if there's no solution."
+			buzzer_id = gets.chomp
+		end
+		return buzzer_id
 	end
 
 	def player_input
@@ -83,15 +94,6 @@ class Make24
 		return @player_answer
 	end
 
-	def buzzer
-		buzzer_id = gets.chomp
-		until buzzer_id == 'n' || buzzer_id == 'a' || buzzer_id == 'l'
-			puts "Invalid input. Press your buzzer or press 'n' if there's no solution."
-			buzzer_id = gets.chomp
-		end
-		return buzzer_id
-	end
-
 	def validated?(player_input, player_input_num, player_input_op)
 		reg = /\A\({0,3}\s*\d{1,2}\s*(\*|\+|-|\/)\s*\({0,2}\s*\d{1,2}\s*\)?\s*(\*|\+|-|\/)\s*\(?\s*\d{1,2}\s*\){0,2}\s*(\*|\+|-|\/)\s*\d{1,2}\s*\){0,3}\z/
 		unless (player_input.match reg) && player_input_num.sort == @hand.sort
@@ -101,6 +103,7 @@ class Make24
 		end
 	end
 
+#Check whether player's answer is correct. If not, or if no answer entered, computer finds the solution
 	def check_player_answer
 		if @player_answer
 			if eval(@player_answer[0]) == 24
@@ -246,19 +249,7 @@ class Make24
 		end
 	end
 
-	#def countdown
-	#	puts "You have 10 seconds to enter a correct solution. (Refer to each card by letter)"
-	#	@count = 10
-	#	10.times do
-	# 		print "#{count}..."
-	# 		sleep(1)
-	# 		@count -= 1
-	# 		break if player_input
-	# 	end
-	# 	puts "Times up!"
-	# 	@count
-	# end
-
+#Check if the game has ended. If so, announce winner or tie.
 	def terminal?
 		if @deck.length == 0
 			return true
