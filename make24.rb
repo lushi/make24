@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
+
+require_relative './find_solution'
+
 class Make24
 	STD_DECK = (1..10).to_a * 4 + [1, 1, 1] * 4
 
@@ -80,13 +83,11 @@ class Make24
 			puts "Player #{player_id}, enter an equation to make 24:"
 			player_input = gets.chomp
 			player_input_num =player_input.gsub(/(\(|\)|\*|\+|-|\/)/, " ").split(" ").reject(&:empty?).map(&:to_i)
-			player_input_op = player_input.split(//).map(&:strip).reject(&:empty?).reject{ |char| char.match /\d/}
 
 			until validated?(player_input, player_input_num, player_input_op)
 				puts "Nope, try again: "
 				player_input = gets.chomp.downcase
 				player_input_num =player_input.gsub(/(\(|\)|\*|\+|-|\/)/, " ").split(" ").reject(&:empty?).map(&:to_i)
-				player_input_op = player_input.split(//).map(&:strip).reject(&:empty?).reject{ |char| char.match /\d/}
 			end
 
 			@player_answer = [player_input, player_id]
@@ -115,137 +116,28 @@ class Make24
 				puts "The correct answer is: #{find_solution}"
 			end
 		else
-			puts find_solution
+			puts print_solution
 		end
 	end
-
 
 	def find_solution
-		hand = @hand.sort.reverse # => [a, b, c, d] where [a-d] represent the value of a card in descending order
-		combos_ab = ["#{hand[0]} + #{hand[1]}", "#{hand[0]} - #{hand[1]}", "#{hand[0]} * #{hand[1]}", "#{hand[0].to_f} / #{hand[1]}"]
-		combos_cd = ["#{hand[2]} + #{hand[3]}", "#{hand[2]} - #{hand[3]}", "#{hand[2]} * #{hand[3]}", "#{hand[2].to_f} / #{hand[3]}"]
-
-		combos_ac = ["#{hand[0]} + #{hand[2]}", "#{hand[0]} - #{hand[2]}", "#{hand[0]} * #{hand[2]}", "#{hand[0].to_f} / #{hand[2]}"]
-		combos_bd = ["#{hand[1]} + #{hand[3]}", "#{hand[1]} - #{hand[3]}", "#{hand[1]} * #{hand[3]}", "#{hand[1].to_f} / #{hand[3]}"]
-
-		combos_ad = ["#{hand[0]} + #{hand[3]}", "#{hand[0]} - #{hand[3]}", "#{hand[0]} * #{hand[3]}", "#{hand[0].to_f} / #{hand[3]}"]
-		combos_bc = ["#{hand[1]} + #{hand[2]}", "#{hand[1]} - #{hand[2]}", "#{hand[1]} * #{hand[2]}", "#{hand[1].to_f} / #{hand[2]}"]
-
-		solution = find_solution_3x1(combos_ab, hand[2], hand[3]) ||
-			find_solution_3x1(combos_cd, hand[0], hand[1]) ||
-			find_solution_3x1(combos_ac, hand[1], hand[3]) ||
-			find_solution_3x1(combos_bd, hand[0], hand[2]) ||
-			find_solution_3x1(combos_ad, hand[1], hand[2]) ||
-			find_solution_3x1(combos_bc, hand[0], hand[3]) ||
-			find_solution_2x2(combos_ab, combos_cd) ||
-			find_solution_2x2(combos_ac, combos_bd) ||
-			find_solution_2x2(combos_ad, combos_bc) ||
-			"No solution"
+		FindSolution.new(*@hand.sort.reverse).solution
 	end
 
-	def find_solution_2x2 (combos1, combos2)
-		add(combos1, combos2) ||
-		multiply(combos1, combos2) ||
-		subtract(combos1, combos2) ||
-		divide(combos1, combos2)
-	end
-
-	def add(combos1, combos2)
-		combos1.find do |combo1|
-			combos2.find do |combo2|
-				if eval(combo1) + eval(combo2) == 24
-					return "(#{combo1}) + (#{combo2}) = 24"
-				end
-			end
+	def add_paren(s)
+		if s[2]
+			"((#{s[0][0]} #{s[1][0]} #{s[0][1]}) #{s[1][1]} #{s[0][2]}) #{s[1][2]} #{s[0][3]}"
+		else
+			"(#{s[0][0]} #{s[1][0]} #{s[0][1]}) #{s[1][1]} (#{s[0][2]} #{s[1][2]} #{s[0][3]})"
 		end
 	end
 
-	def multiply(combos1, combos2)
-		combos1.find do |combo1|
-			combos2.find do |combo2|
-				if eval(combo1) * eval(combo2) == 24
-					return "(#{combo1}) * (#{combo2}) = 24"
-				end
-			end
-		end
-	end
-
-	def subtract(combos1, combos2)
-		combos1.find do |combo1|
-			combos2.find do |combo2|
-				if eval(combo1) - eval(combo2) == 24
-					return "(#{combo1}) - (#{combo2}) = 24"
-				end
-			end
-		end
-	end
-
-	def divide(combos1, combos2)
-		combos1.find do |combo1|
-			combos2.find do |combo2|
-				if eval(combo2) != 0 && eval(combo1) / eval(combo2) == 24 && eval(combo1) % eval(combo2) == 00
-					return "(#{combo1}) / (#{combo2}) = 24"
-				end
-
-			end
-		end
-	end
-
-	def find_solution_3x1(combos, card1, card2)
-		combos.find do |combo|
-			c = eval(combo)
-
-			if (c + card1) * card2 == 24
-				return "(#{combo} + #{card1}) * #{card2} = 24"
-			elsif (c + card1) / card2 == 24
-				return "(#{combo} + #{card1}) / #{card2} = 24"
-			elsif (c + card2) * card1 == 24
-				return "(#{combo} + #{card2}) * #{card1} = 24"
-			elsif (c + card2) / card1 == 24
-				return "(#{combo} + #{card2}) / #{card1} = 24"
-			elsif (c - card1) * card2 == 24
-				return "(#{combo} - #{card1}) * #{card2} = 24"
-			elsif (c - card1) / card2 == 24
-				return "(#{combo} - #{card1}) / #{card2} = 24"
-			elsif (c - card2) * card1 == 24
-				return "(#{combo} - #{card2}) * #{card1} = 24"
-			elsif (c - card2) / card1 == 24
-				return "(#{combo} - #{card2}) / #{card1} = 24"
-			elsif c * card1 - card2 == 24
-				return "(#{combo}) * #{card1} - #{card2} = 24"
-			elsif c * card1 + card2 == 24
-				return "(#{combo}) * #{card1} + #{card2} = 24"
-			elsif c * card2 - card1 == 24
-				return "(#{combo}) * #{card2} - #{card1} = 24"
-			elsif c * card2 + card1 == 24
-				return "(#{combo}) * #{card2} + #{card1} = 24"
-			elsif c / card1 - card2 == 24
-				return "(#{combo}) / #{card1} - #{card2} = 24"
-			elsif c / card1 + card2 == 24
-				return "(#{combo}) / #{card1} + #{card2} = 24"
-			elsif c / card2 - card1 == 24
-				return "(#{combo}) / #{card2} - #{card1} = 24"
-			elsif c / card2 + card1 == 24
-				return "(#{combo}) / #{card2} + #{card1} = 24"
-			elsif (card1 - c) * card2 == 24
-				return "(#{card1} - (#{combo})) * #{card2} = 24"
-			elsif (card1 - c) / card2 == 24
-				return "(#{card1} - (#{combo})) / #{card2} = 24"
-			elsif (card2 - c) * card1 == 24
-				return "(#{card2} - (#{combo})) * #{card1} = 24"
-			elsif (card2 - c) / card1 == 24
-				return "(#{card2} - (#{combo})) / #{card1} = 24"
-			elsif c != 0
-				if card1 / c - card2 == 24
-					return "#{card1} / (#{combo}) - #{card2} = 24"
-				elsif card1 / c + card2 == 24
-					return "#{card1} / (#{combo}) + #{card2} = 24"
-				elsif card2 / c - card1 == 24
-					return "#{card2} / (#{combo}) - #{card1} = 24"
-				elsif card2 / c + card1 == 24
-					return "#{card2} / (#{combo}) + #{card1} = 24"
-				end
-			end
+	def print_solution
+		s = find_solution
+		if s
+			add_paren(s)
+		else
+			"No solution."
 		end
 	end
 
@@ -263,11 +155,7 @@ class Make24
 		if @score[0] == @score[1]
 			puts "You tied!"
 		else
-			if @game_mode == 1
-				puts @score[0] > @score[1] ? "You win!" : "The computer wins!"
-			else
-				puts @score[0] > @score[1] ? "Player 1 wins!" : "Player 2 wins!"
-			end
+			puts @score[0] > @score[1] ? "Player 1 wins!" : "Player 2 wins!"
 		end
 	end
 end
