@@ -1,6 +1,15 @@
-4 cards are displayed at a time. Try to make 24 by combining the cards with +, -, *, /, (, and ).
-You will be assigned a buzzer. Press it when you are ready to answer.
-You will receive 1 point for a correct solution. You will lose 1 point for a wrong solution.
+Out of a standard 52-card deck, 4 cards are displayed at a time.
+Make 24 by combining the numbers with +, -, *, /, (, and/or ).
+
+Press your buzzer to submit an answer.
+Player 1's buzzer is the 'a' key. Player 2's buzzer is the 'l' key.
+Press 'n' if you think there is no solution.
+
+You will receive 1 point for a correct solution, and lose 1 point for a wrong one.
 If no solution is possible, there will be no change to the score.
-The game ends when all cards in the deck are played or if there are no possible solutions left.
-Press the buzzer and enter the correct solution before your opponent to win!
+Press the buzzer and enter the correct solution first to increase your score!
+
+The game ends when all cards in the deck are played.
+
+Press any key to continue.
+>

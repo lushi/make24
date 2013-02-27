@@ -24,17 +24,18 @@ class Make24
 		puts "Press 'r' to read the rules. Press any other key to play."
 		print ">"
 		r = gets.chomp.downcase
+		rules = File.open ("rules.txt")
 		if r == 'r' #put the following text in separate file intro.txt
-			txt = File.open ("rules.txt")
-			puts txt.read
-			txt.close
-			print "Press any key to continue.\n> "
+			print rules.read
 			STDIN.gets
 		else
-			puts "Player 1's buzzer is 'a'. Player 2's buzzer is 'l'."
-			puts "Press your buzzer when you're ready to answer."
-			puts "Press 'n' if you think there is no solution."
+			line_num = 0
+			rules.each_line do |line|
+				puts line.chomp if line_num >=3 && line_num <= 5
+				line_num += 1
+			end
 		end
+		rules.close
 	end
 
 	def show_hand
