@@ -84,7 +84,7 @@ class Make24
 			player_input = gets.chomp
 			player_input_num =player_input.gsub(/(\(|\)|\*|\+|-|\/)/, " ").split(" ").reject(&:empty?).map(&:to_i)
 
-			until validated?(player_input, player_input_num, player_input_op)
+			until validated?(player_input, player_input_num)
 				puts "Nope, try again: "
 				player_input = gets.chomp.downcase
 				player_input_num =player_input.gsub(/(\(|\)|\*|\+|-|\/)/, " ").split(" ").reject(&:empty?).map(&:to_i)
@@ -95,7 +95,7 @@ class Make24
 		return @player_answer
 	end
 
-	def validated?(player_input, player_input_num, player_input_op)
+	def validated?(player_input, player_input_num)
 		reg = /\A\({0,3}\s*\d{1,2}\s*(\*|\+|-|\/)\s*\({0,2}\s*\d{1,2}\s*\)?\s*(\*|\+|-|\/)\s*\(?\s*\d{1,2}\s*\){0,2}\s*(\*|\+|-|\/)\s*\d{1,2}\s*\){0,3}\z/
 		unless (player_input.match reg) && player_input_num.sort == @hand.sort
 			return false
