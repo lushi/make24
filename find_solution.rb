@@ -1,7 +1,7 @@
 class FindSolution
 	attr_reader :numbers
 	def initialize(n1, n2, n3, n4)
-		@numbers = [n1.to_f, n2.to_f, n3.to_f,n4.to_f]
+		@numbers = [n1.to_f, n2.to_f, n3.to_f,n4.to_f].sort.reverse
 	end
 
 	def operators
@@ -40,5 +40,18 @@ class FindSolution
 			end
 		end
 		nil
+	end
+
+	def print_solution
+		s = solution
+		add_paren(s) if s
+	end
+
+	def add_paren(s)
+		if s[2]
+			"((#{s[0][0]} #{s[1][0]} #{s[0][1]}) #{s[1][1]} #{s[0][2]}) #{s[1][2]} #{s[0][3]}"
+		else
+			"(#{s[0][0]} #{s[1][0]} #{s[0][1]}) #{s[1][1]} (#{s[0][2]} #{s[1][2]} #{s[0][3]})"
+		end
 	end
 end

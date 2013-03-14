@@ -1,8 +1,8 @@
 Out of a standard 52-card deck, 4 cards are displayed at a time.
 Make 24 by combining the numbers with +, -, *, /, (, and/or ).
 
+You will be asked to pick a buzzer key.
 Press your buzzer to submit an answer.
-Player 1's buzzer is the 'a' key. Player 2's buzzer is the 'l' key.
 Press 'n' if you think there is no solution.
 
 You will receive 1 point for a correct solution, and lose 1 point for a wrong one.
