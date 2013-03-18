@@ -1,0 +1,10 @@
+<div class="message">
+<p>That's not right.
+	<% if @solution == 0 %>
+		There is no solution.
+	<% else %>
+		The solution is: <%= @solution %>
+	<% end %>
+</p>
+</div>
+<a href="/play"><div class="button">Continue</div></a>

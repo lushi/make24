@@ -1,0 +1,32 @@
+<div class="hand">
+<% @hand.each do |card| %>
+		<div class="card">
+			<%= card %>
+		</div>
+<% end %>
+</div>
+
+<div id="score">
+	<p>Score: <%= @score %><p>
+</div>
+
+<% if @solution %>
+	<div class="message">
+	<% if @solution == 0 %>
+		<p>There is no solution.</p>
+	<% else %>
+		<p>The solution is: <%= @solution %> </p>
+	<% end %>
+	</div>
+	<div class="button">
+		<a href="/play">Continue</a>
+	</div>
+<% else %>
+	<form action="/validate" method="post">
+		<input type="text" name="player_answer" class="textarea" value="Enter your solution here. Ex: (1 + 2) * (3 + 4)." onfocus="if(this.value=='Enter your solution here. Ex: (1 + 2) * (3 + 4).') {this.value='', this.style.color='#000'};">
+		<input type="submit" class="sm_button" value="Submit">
+	</form>
+	<form action="/solution" method="post">
+		<input type="submit" class="sm_button" value="No solution?">
+	</form>
+<% end %>

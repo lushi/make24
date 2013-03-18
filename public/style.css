@@ -1,0 +1,115 @@
+body {
+	margin: 1% 18%;
+}
+
+h1 {
+	font-size: 80px;
+	font-family: "Courier", Serif;
+	text-align: center;
+	margin-bottom: 38px;
+}
+
+a {
+	text-decoration: none;
+}
+
+p {
+	font-size: 24px;
+	font-family: Sans-serif;
+	color: #636363;
+}
+
+.button {
+	width: 145px;
+	margin: 80px auto;
+	border: 2px solid #ccc;
+	padding: 7px 14px;
+	border-radius: 4px;
+	box-shadow: rgba(0,0,0,1) 0 1px 0;
+	text-shadow: rgba(0,0,0,.4) 0 1px 0;
+	font-size: 26px;
+	font-family: "Courier", Serif;
+	text-decoration: none;
+	text-align: center;
+	}
+
+.button:hover {
+	border-top-color: #28597a;
+	background: #28597a;
+	color: #ccc;
+	}
+
+.sm_button {
+	width: 20%;
+	height: 15%;
+	margin-top: 38px;
+	border: 2px solid #ccc;
+	padding: 7px 14px;
+	border-radius: 4px;
+	box-shadow: rgba(0,0,0,1) 0 1px 0;
+	text-shadow: rgba(0,0,0,.4) 0 1px 0;
+	font-size: 18px;
+	font-family: "Courier", Serif;
+	text-decoration: none;
+	text-align: center;
+	float: right;
+	clear: right;
+}
+
+.sm_button:hover {
+	border-top-color: #28597a;
+	background: #28597a;
+	color: #ccc;
+	}
+
+#score{
+	font-family: "Courier", Serif;
+	width: 100%;
+	text-align: center;
+	float: right;
+	margin-top: 38px;
+	text-align: center;
+}
+
+.hand {
+	margin: 0 auto;
+}
+
+.card {
+	border: 2px solid #ccc;
+	float: left;
+	width: 114px;
+	height: 178px;
+	margin: 0 7%;
+	line-height: 178px;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 26px;
+}
+.hand > :first-child { margin-left: 0 !important; }
+.hand > :last-child { margin-right: 0 !important; }
+
+.textarea{
+	margin: 38px 0 auto;
+	width: 73%;
+	height: 15%;
+	padding: 8px 14px;
+	font-size: 18px;
+	color: #ccc;
+}
+
+.message{
+	margin-top: 38px;
+	text-align: center;
+}
+
+#announce{
+	text-align: center;
+}
+
+footer {
+ position:absolute;
+ bottom:0;
+ width:100%;
+ height:20px;
+}
