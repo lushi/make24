@@ -19,23 +19,17 @@ class FindSolution
 			send(op[1], number[2].send(op[2], number[3]))
 	end
 
-	def good_permutation_seq?(nums, ops)
-		24 == apply_ops_seq(nums, ops)
+	def good_permutation(nums, ops)
+		(0 if 24 == apply_ops_seq(nums, ops)) || (1 if 24 == apply_ops_nonseq(nums,ops))
 	rescue ZeroDivisionError
-		false
-	end
-
-	def good_permutation_nonseq?(nums,ops)
-		24 == apply_ops_nonseq(nums, ops)
-	rescue ZeroDivisionError
-		false
+		nil
 	end
 
 	def solution
 		numbers.permutation 4 do |nums|
 			operators.repeated_permutation 3 do |ops|
-				if good_permutation_seq?(nums, ops) || good_permutation_nonseq?(nums, ops)
-					return [nums.map { |n| n.to_i }, ops, good_permutation_seq?(nums, ops)]
+				if good_permutation(nums, ops)
+					return [nums.map { |n| n.to_i }, ops, good_permutation(nums, ops)]
 				end
 			end
 		end
@@ -48,7 +42,7 @@ class FindSolution
 	end
 
 	def add_paren(s)
-		if s[2]
+		if s[2] == 0
 			"((#{s[0][0]} #{s[1][0]} #{s[0][1]}) #{s[1][1]} #{s[0][2]}) #{s[1][2]} #{s[0][3]}"
 		else
 			"(#{s[0][0]} #{s[1][0]} #{s[0][1]}) #{s[1][1]} (#{s[0][2]} #{s[1][2]} #{s[0][3]})"

@@ -104,13 +104,13 @@ class Make24Test < MiniTest::Unit::TestCase
 	end
 
 	def test_find_solution_solution_seq
-		hand = [10,10,2,2]
-		assert_equal("((10 + 10) + 2) + 2", FindSolution.new(*hand).print_solution)
+		hand = [10,3,2,2]
+		assert_equal("((10 + 3) * 2) - 2", FindSolution.new(*hand).print_solution)
 	end
 
 	def test_find_solution_solution_non_seq
 		hand = [1, 3, 8, 2]
-		refute_equal("No solution", FindSolution.new(*hand).print_solution)
+		refute_nil(FindSolution.new(*hand).print_solution)
 	end
 
 	def test_terminate_false
