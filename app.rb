@@ -18,7 +18,7 @@ end
 
 get '/' do
   session[:id] = SecureRandom.uuid
-  games_db[session[:id]] = Make24App.new(STD_DECK, 1)
+  games_db[session[:id]] = Make24App.new(STD_DECK.dup, 1)
   erb :home
 end
 
