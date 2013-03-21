@@ -41,7 +41,7 @@ end
 post '/solution' do
 	@hand = games_db[session[:id]].hand
 	@solution = games_db[session[:id]].solution || 0
-	games_db[session[:id]].score[0] -= 1 unless @solution == nil
+	games_db[session[:id]].score[0] -= 1 unless @solution == 0
 	@score = games_db[session[:id]].score[0]
 	erb :play
 end
