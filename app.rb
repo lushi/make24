@@ -38,34 +38,28 @@ get '/play' do
 	end
 end
 
-def get_session_id(env)
-	env["rack.session.unpacked_cookie_data"]["id"]
-end
-
 post '/solution' do
-	session_id = get_session_id(env)
-	@hand = games_db[session_id].hand
-	@solution = games_db[session_id].solution || 0
-	games_db[session_id].score[0] -= 1 unless @solution == nil
-	@score = games_db[session_id].score[0]
+	@hand = games_db[session[:id]].hand
+	@solution = games_db[session[:id]].solution || 0
+	games_db[session[:id]].score[0] -= 1 unless @solution == nil
+	@score = games_db[session[:id]].score[0]
 	erb :play
 end
 
 post '/validate' do
-	session_id = get_session_id(env)
-	games_db[session_id].player_answer = params[:player_answer]
-	if games_db[session_id].input_valid?
-		if games_db[session_id].make24?
-			games_db[session_id].score[0] += 1
+	games_db[session[:id]].player_answer = params[:player_answer]
+	if games_db[session[:id]].input_valid?
+		if games_db[session[:id]].make24?
+			games_db[session[:id]].score[0] += 1
 			erb :message_right
 		else
-			games_db[session_id].score[0] -= 1
-			@solution = games_db[session_id].solution
+			games_db[session[:id]].score[0] -= 1
+			@solution = games_db[session[:id]].solution
 			erb :message_wrong
 		end
 	else
-		@hand = games_db[session_id].hand
-		@score = games_db[session_id].score[0]
+		@hand = games_db[session[:id]].hand
+		@score = games_db[session[:id]].score[0]
 		erb :replay
 	end
 end
